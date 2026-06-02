@@ -1,11 +1,11 @@
 <div align="center">
 
-# 💻 Remote Work Productivity: Employee Performance ML Pipeline
+# 💻 Remote Work Productivity: ML Prediction Pipeline
 
 *An End-to-End Machine Learning Project to Predict, Analyze, and Optimize Employee Productivity and Work Quality in Remote Work Environments.*
 
-[![Status](https://img.shields.io/badge/Status-🚀_Active-brightgreen?style=for-the-badge)](https://github.com/)
-[![Progress](https://img.shields.io/badge/Progress-80%25_Modeling_In_Progress-blue?style=for-the-badge)](https://github.com/)
+[![Status](https://img.shields.io/badge/Status-🚀_Active-brightgreen?style=for-the-badge)](#)
+[![Progress](https://img.shields.io/badge/Progress-90%25_Modeling_Completed-blue?style=for-the-badge)](#)
 [![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
 
@@ -17,10 +17,9 @@
 1. [🎯 Project Overview](#-project-overview)
 2. [📊 Dataset Information](#-dataset-information)
 3. [🧠 Methodology & Pipeline](#-methodology--pipeline)
-   - [Phase 1: Exploratory Data Analysis (EDA)](#1️⃣-exploratory-data-analysis-eda)
-   - [Phase 2: Data Cleaning & Feature Engineering](#2️⃣-data-cleaning--feature-engineering)
-   - [Phase 3: Pipeline Design & Model Training](#3️⃣-pipeline-design--model-training)
-4. [🏆 Modeling Results (Quality Score)](#-modeling-results-quality-score)
+4. [🏆 Modeling Results](#-modeling-results)
+   - [Productivity Score Models](#productivity-score-models)
+   - [Quality Score Models](#quality-score-models)
 5. [📁 Project Structure](#-project-structure)
 6. [🚀 Setup & Installation](#-setup--installation)
 7. [🛣️ Roadmap & Future Steps](#-roadmap--future-steps)
@@ -29,87 +28,77 @@
 
 ## 🎯 Project Overview
 
-This repository hosts a robust, end-to-end **Machine Learning Pipeline** designed to predict and analyze employee productivity and work quality in remote working setups. Leveraging survey data from 1,500 employees, the system uncovers key drivers of performance—such as work-from-home (WFH) frequency, home office setup, job satisfaction, stress levels, and team collaboration—and evaluates a wide array of state-of-the-art regression models to predict performance metrics.
+This repository hosts a robust, end-to-end **Machine Learning Pipeline** designed to predict and analyze employee performance metrics in remote and hybrid working setups. Leveraging survey data from 1,500 employees, the system uncovers key drivers of performance—such as WFH frequency, home office setup, job satisfaction, stress levels, and team collaboration.
 
-Specifically, the pipeline aims to solve two major regression problems:
-1. **Predicting Productivity Score** (reflecting output volume and efficiency).
-2. **Predicting Quality Score** (reflecting accuracy, reliability, and value of output).
+The project solves two major regression problems:
+1. **Predicting Productivity Score**: Evaluating output volume and overall efficiency.
+2. **Predicting Quality Score**: Evaluating the accuracy, reliability, and value of the work delivered.
 
 ---
 
 ## 📊 Dataset Information
 
-The data contains survey results capturing demographical, environmental, professional, and well-being metrics of remote and hybrid workers.
+The dataset comprises survey results capturing the demographical, environmental, professional, and well-being metrics of workers.
 
 | **Metric** | **Value** |
 | :--- | :--- |
-| 🗃️ **Raw Rows** | 1,500 |
-| 🧹 **Processed Rows** | 1,500 (Split into two target-optimized datasets) |
+| 🗃️ **Raw Rows** | 1,500 (`data/raw/remote_work_productivity.csv`) |
+| 🧹 **Processed Rows** | 1,500 (Split into two target-optimized datasets to avoid target leakage) |
 | 📍 **Features** | 30 raw features $\rightarrow$ 25 engineered/cleaned features |
 | 🎯 **Target Variables** | `Productivity_Score` & `Quality_Score` (0-100 scales) |
 
-### 🔑 Core Feature Breakdown
+### 🔑 Core Features Breakdown
 * **Demographics:** `Age`, `Gender`, `Education_Level`, `Marital_Status`, `Has_Children`.
 * **Work Environment:** `WFH_Days_Per_Week`, `Location_Type`, `Home_Office_Quality`, `Internet_Speed_Category`.
 * **Professional Details:** `Department`, `Job_Level`, `Company_Size`, `Industry`, `Years_Experience`, `Work_Hours_Per_Week`.
-* **Well-being & Collaboration:** `Meetings_Per_Week`, `Commute_Time_Minutes`, `Job_Satisfaction`, `Stress_Level`, `Work_Life_Balance`, `Team_Collaboration_Frequency`, `Manager_Support_Level`.
-* **Performance Metrics:** `Productivity_Score`, `Quality_Score`, `Innovation_Score`, `Efficiency_Rating`, `Task_Completion_Rate`.
+* **Well-being & Collaboration:** `Meetings_Per_Week`, `Commute_Time_Minutes`, `Job_Satisfaction`, `Stress_Level`, `Work_Life_Balance`, `Team_Collaboration_Frequency`.
 
 ---
 
 ## 🧠 Methodology & Pipeline
 
-The project development is structured into clean, modular phases within the Jupyter notebooks:
+The ML pipeline is structured into clean, modular phases documented in our Jupyter notebooks:
 
-### 1️⃣ Exploratory Data Analysis (EDA)
-> *Found in `notebooks/data_info.ipynb`*
-* **Statistical Profiling:** Generated descriptive statistics (`mean`, `std`, `min`, `max`) to check for anomalies or missing data.
-* **Feature Distribution:** Explored how performance scores vary across age, gender, education, and WFH frequency.
-* **Multicollinearity Checks:** Identified extremely high correlations ($>0.78$) among target/productivity features (`Productivity_Score`, `Quality_Score`, `Task_Completion_Rate`, `Innovation_Score`, and `Efficiency_Rating`), confirming that overall productivity and output quality are highly aligned.
+### 1️⃣ Exploratory Data Analysis & Cleaning (`notebooks/data_info.ipynb`)
+- **Statistical Profiling:** Analyzed feature distributions and identified extreme multicollinearity among performance metrics (`Productivity_Score`, `Quality_Score`, `Innovation_Score`, etc.).
+- **Data Pruning:** Dropped irrelevant metadata (`Employee_ID`, `Survey_Date`) and consolidated high-cardinality classes.
+- **Leakage Prevention:** Created completely isolated datasets (`df_productivity_score.csv` and `df_quality_score.csv`) so models wouldn't use one target to predict the other.
 
-### 2️⃣ Data Cleaning & Feature Engineering
-> *Found in `notebooks/data_info.ipynb`*
-* **High-Cardinality/Metadata Filtering:** Dropped irrelevant identifiers (`Employee_ID`, `Survey_Date`, `Response_Quality`) to prevent models from learning trivial noise.
-* **Gender Normalization:** Consolidated non-binary categories into `Other` to simplify representation during one-hot encoding.
-* **High-Value Feature Creation:** 
-  * Engineered a custom **`Smart_Work_Index`** defined as:
-    $$\text{Smart\_Work\_Index} = \text{Task\_Completion\_Rate} \times \text{Innovation\_Score}$$
-    This acts as a synthetic metric reflecting high-quality, innovative output.
-* **Target Leakage Mitigation:** Split the processed data into two separate, leakage-free sub-datasets:
-  * 📂 **`df_productivity_score.csv`**: Drops `Quality_Score` and `Task_Completion_Rate` to isolate volume metrics.
-  * 📂 **`df_quality_score.csv`**: Drops `Productivity_Score` and `Task_Completion_Rate` to isolate quality metrics.
+### 2️⃣ Pipeline Design & Feature Engineering
+- **Encoding & Scaling:** Utilized `ColumnTransformer` with `OneHotEncoder(handle_unknown='ignore')` for categoricals and `StandardScaler()` for numericals.
+- **Stratification:** Split the data maintaining gender ratios (`stratify=X['Gender']`).
+- **Iterative Experimentation:** We utilized a primary pipeline (`notebooks/`) and a retry pipeline (`Quality-retry-ML/`) to iteratively drop noisy engineered features (like `Smart_Work_Index`) and perform deep hyperparameter tuning.
 
-### 3️⃣ Pipeline Design & Model Training
-> *Found in `notebooks/Quality_Score_train.ipynb`*
-* **ColumnTransformer Integration:** Categorical variables are preprocessed using `OneHotEncoder(handle_unknown='ignore')`, and numerical features are standardized using `StandardScaler()`.
-* **Stratified Splitting:** Applied `train_test_split` with `stratify=X['Gender']` to maintain gender ratios across train and test sets.
-* **Multi-Model Benchmark:** Evaluated **14 different regression algorithms** simultaneously, including linear formulations, tree ensembles, and advanced gradient boosters.
+### 3️⃣ Multi-Model Benchmarking
+For both targets, we benchmarked **14 regression algorithms**, ranging from Linear/Ridge/Lasso regressions to powerful tree ensembles (Random Forest, XGBoost, CatBoost, LightGBM, HistGradientBoosting).
 
 ---
 
-## 🏆 Modeling Results (Quality Score)
+## 🏆 Modeling Results
 
-Below are the performance metrics of the 14 models benchmarked on the test set for predicting **`Quality_Score`**, sorted by **$R^2$ Score**:
+### Productivity Score Models
+*Evaluated in `notebooks/Productivitiy_Score_train.ipynb`*
 
-| **Rank** | **Model** | **MAE** | **RMSE** | **$R^2$ Score** | **Training Time (sec)** |
+| **Rank** | **Model** | **MAE** | **RMSE** | **$R^2$ Score** | **Training Time (s)** |
 |:---:|:---|:---:|:---:|:---:|:---:|
-| 🥇 | **Random Forest Regressor** | **5.177** | **6.578** | **0.751** | 0.955 |
-| 🥈 | **Gradient Boosting Regressor** | **5.275** | **6.620** | **0.748** | 0.281 |
-| 🥉 | **CatBoost Regressor** | **5.193** | **6.637** | **0.746** | 1.473 |
-| 4 | LightGBM Regressor | 5.335 | 6.799 | 0.734 | 0.110 |
-| 5 | Ridge Regression | 5.472 | 6.954 | 0.722 | 0.004 |
-| 6 | Hist Gradient Boosting Regressor | 5.435 | 6.953 | 0.722 | 0.256 |
-| 7 | Linear Regression | 5.474 | 6.966 | 0.721 | 0.015 |
-| 8 | Lasso Regression | 5.608 | 6.958 | 0.721 | 0.001 |
-| 9 | MLP Regressor | 5.454 | 6.993 | 0.718 | 1.556 |
-| 10 | XGBoost Regressor | 5.731 | 7.207 | 0.701 | 0.086 |
-| 11 | ElasticNet Regression | 6.046 | 7.437 | 0.682 | 0.003 |
-| 12 | Support Vector Regressor | 6.079 | 7.529 | 0.674 | 0.111 |
-| 13 | K-Nearest Neighbors Regressor | 6.175 | 7.857 | 0.645 | 0.012 |
-| 14 | Decision Tree Regressor | 7.869 | 9.892 | 0.437 | 0.026 |
+| 🥇 | **Gradient Boosting Regressor** | **3.643** | **4.780** | **0.893** | 0.270 |
+| 🥈 | Random Forest Regressor | 3.808 | 4.900 | 0.887 | 0.856 |
+| 🥉 | CatBoost Regressor | 3.737 | 4.903 | 0.887 | 1.644 |
 
-> [!NOTE]
-> Tree ensemble models (Random Forest, Gradient Boosting, CatBoost, and LightGBM) perform exceptionally well, achieving $R^2$ scores above **0.73-0.75**. This indicates that tree-based models successfully capture non-linear relationships between environment variables (like home office quality, internet speed) and output quality.
+> **Conclusion:** Tree-based ensemble methods captured the non-linear dynamics of productivity exceptionally well. The **Gradient Boosting Regressor** was selected as the final production model for Productivity and serialized to `models/Productivity/`.
+
+### Quality Score Models
+*Evaluated in `Quality-retry-ML/notebooks/traininng.ipynb`*
+
+Initially, Random Forest achieved an $R^2$ of 0.751. However, by optimizing our feature set (dropping highly-correlated index features that added noise) and running a deep hyperparameter tuning phase, we achieved significant improvements.
+
+| **Rank** | **Model** | **MAE** | **RMSE** | **$R^2$ Score** | **Training Time (s)** |
+|:---:|:---|:---:|:---:|:---:|:---:|
+| 🥇 | **Lasso Regression (alpha=0.1)** | **-** | **-** | **0.824** | 0.001 |
+| 🥈 | Random Forest Regressor | 4.542 | 5.639 | 0.817 | 0.979 |
+| 🥉 | Ridge Regression | 4.462 | 5.679 | 0.814 | 0.002 |
+
+> **Conclusion:** The refined pipeline revealed that a regularized linear model, **Lasso Regression (alpha=0.1)**, outperformed complex ensembles for Quality prediction. It was selected as the final production model and serialized to `models/Quality/`.
 
 ---
 
@@ -117,17 +106,30 @@ Below are the performance metrics of the 14 models benchmarked on the test set f
 
 ```text
 Remote-Work-Productivity-ML/
-├── 📄 .gitignore                         # Comprehensive git ignore configuration (Added)
-├── 📄 README.md                          # Detailed documentation guide (Updated)
+├── 📄 .gitignore                         # Git ignore configurations
+├── 📄 README.md                          # Main project documentation
 ├── 📊 data/
 │   ├── raw/
-│   │   └── remote_work_productivity.csv  # Raw survey dataset (1,500 rows, 30 columns)
+│   │   └── remote_work_productivity.csv  # Raw dataset
 │   └── processed/
-│       ├── df_productivity_score.csv     # Preprocessed dataset for Productivity prediction
-│       └── df_quality_score.csv          # Preprocessed dataset for Quality prediction
-└── 📓 notebooks/
-    ├── data_info.ipynb                   # EDA, Data Cleaning & Feature Engineering Notebook
-    └── Quality_Score_train.ipynb         # Model Training, Pipelines & Evaluation (14 Models)
+│       ├── df_productivity_score.csv     # Cleaned dataset for Productivity
+│       └── df_quality_score.csv          # Cleaned dataset for Quality
+├── 📂 models/                            # Serialized Production Models
+│   ├── 📂 Productivity/
+│   │   ├── 📄 GradientBoostingRegressor.joblib
+│   │   └── 📄 preprocessor.joblib
+│   └── 📂 Quality/
+│       ├── 📄 Lasso_model.joblib
+│       └── 📄 preprocessor.joblib
+├── 📓 notebooks/
+│   ├── data_info.ipynb                   # Initial EDA and Cleaning
+│   ├── Productivitiy_Score_train.ipynb   # 14-Model Benchmark for Productivity
+│   └── Quality_Score_train.ipynb         # Initial Benchmark for Quality
+└── 📂 Quality-retry-ML/                   # Advanced Tuning & Retry Experiments
+    ├── 📊 data/                          
+    └── 📓 notebooks/
+        ├── preprocessing.ipynb           # Feature optimization
+        └── traininng.ipynb               # Hyperparameter tuning for Lasso
 ```
 
 ---
@@ -140,7 +142,7 @@ git clone https://github.com/your-username/Remote-Work-Productivity-ML.git
 cd Remote-Work-Productivity-ML
 ```
 
-### 2. Create and activate virtual environment
+### 2. Create and activate a virtual environment
 ```bash
 python -m venv venv
 # On Windows:
@@ -149,32 +151,29 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-### 3. Install required libraries
+### 3. Install requirements
 ```bash
-pip install -r requirements.txt
+pip install numpy pandas scikit-learn xgboost lightgbm catboost matplotlib seaborn jupyter joblib
 ```
-*(If a `requirements.txt` is not provided, manual packages to install include: `numpy`, `pandas`, `scikit-learn`, `xgboost`, `lightgbm`, `catboost`, `matplotlib`, `seaborn`, `jupyter`)*
 
-### 4. Run the notebooks
-Start Jupyter notebook server:
+### 4. Explore the Notebooks
 ```bash
 jupyter notebook
 ```
-Navigate to `notebooks/` and open either `data_info.ipynb` or `Quality_Score_train.ipynb`.
+Navigate to the `notebooks/` directory to review the training pipelines.
 
 ---
 
 ## 🛣️ Roadmap & Future Steps
 
-- [x] **Initial Exploration (EDA):** Check distributions, correlation patterns.
-- [x] **Data Processing:** Clean categorical fields, drop noise features.
-- [x] **Feature Engineering:** Build custom indices (`Smart_Work_Index`).
-- [x] **Leakage Separation:** Split target-specific sub-datasets.
-- [x] **Stratified Benchmarking:** Implemented a standardized pipeline across 14 regression models for `Quality_Score`.
-- [ ] 🤖 **Productivity Score Training:** Extend the model pipeline to benchmark `Productivity_Score`.
-- [ ] 🔄 **Hyperparameter Tuning:** Fine-tune top-performing tree-based models (Random Forest, CatBoost) to squeeze out more performance.
-- [ ] 📦 **Model Serialization:** Save the best performing models as `.joblib` files.
-- [ ] 🌐 **FastAPI Inference Service:** Develop a lightweight API endpoint to serve model predictions in real-time.
+- [x] **Initial Exploration (EDA):** Understand distributions and target correlations.
+- [x] **Data Processing & Cleaning:** Handle missing values, encode categoricals, remove target leakage.
+- [x] **Stratified Benchmarking:** Build and benchmark 14 regression pipelines.
+- [x] 🤖 **Productivity Score Training:** Achieved an excellent $R^2 \approx 0.893$ using Gradient Boosting.
+- [x] 🔄 **Quality Score Optimization:** Refined features and tuned Lasso Regression (alpha=0.1) to achieve $R^2 \approx 0.824$.
+- [x] 📦 **Model Serialization:** Saved production models as `.joblib` files.
+- [ ] 🌐 **FastAPI Inference Service:** Develop a scalable API endpoint to serve predictions via REST.
+- [ ] 📊 **Streamlit Dashboard:** Build an interactive frontend to visualize employee productivity profiles.
 
 ---
 
