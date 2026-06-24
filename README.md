@@ -94,7 +94,7 @@ Initially, Random Forest achieved an $R^2$ of 0.751. However, by optimizing our 
 
 | **Rank** | **Model** | **MAE** | **RMSE** | **$R^2$ Score** | **Training Time (s)** |
 |:---:|:---|:---:|:---:|:---:|:---:|
-| 🥇 | **Lasso Regression (alpha=0.1)** | **-** | **-** | **0.824** | 0.001 |
+| 🥇 | **Lasso Regression (alpha=0.1)** | **4.423** | **5.321** | **0.824** | 0.001 |
 | 🥈 | Random Forest Regressor | 4.542 | 5.639 | 0.817 | 0.979 |
 | 🥉 | Ridge Regression | 4.462 | 5.679 | 0.814 | 0.002 |
 
